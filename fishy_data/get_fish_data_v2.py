@@ -52,7 +52,6 @@ class VideoParser:
             for line in f:
                 if line.startswith('MasterRecordInitialStart:'):
                     t = line.split(': ')[-1].strip()
-                    print(t)
                     t = dt.strptime(t, '%Y-%m-%d %H:%M:%S.%f')
         self.fm.local_delete(rpath)
         return t.year, t.month
@@ -75,7 +74,6 @@ class VideoParser:
                     img_name = self.generate_filename(pid, vname, count, fps)
                     img_path = self.fm.local_root / self.fm.results_dir / img_name
                     cv2.imwrite(str(img_path), frame)
-                    print(f'writing {img_path}')
                     count += frame_step
                     cap.set(cv2.CAP_PROP_POS_FRAMES, count)
                 else:
