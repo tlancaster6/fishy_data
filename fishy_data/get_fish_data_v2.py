@@ -5,6 +5,7 @@ from datetime import datetime as dt
 import shutil
 import os
 import argparse
+from tqdm import tqdm
 
 class VideoParser:
 
@@ -33,8 +34,8 @@ class VideoParser:
             search_strings = [self.subset]
 
         valid_pids = []
-        for pid in all_pids:
-            if (self.subset == 'all') or (any(s in pid for s in search_strings)):
+        for pid in tqdm(all_pids):
+            if (self.subset == 'all') or (any(s in pid.lower() for s in search_strings)):
                 year, month = self.check_creation_date(pid)
                 if (year >= self.min_month) and (month >= self.min_month):
                     valid_pids.append(pid.strip('/'))
@@ -43,18 +44,19 @@ class VideoParser:
 
     def check_creation_date(self, pid):
         # check a project's creation date robustly using the logfile
-        rpath = self.fm.data_dir / pid / 'logfile.txt'
-        self.fm.download(rpath)
-        lpath = (self.fm.local_root / rpath)
-        if not lpath.exists():
+        rpath = self.fm.data_dir / pid / 'Logfile.txt'
+        if len(self.fm.ls_cloud(rpath)) > 0:
+            self.fm.download(rpath)
+            lpath = (self.fm.local_root / rpath)
+            with open(lpath) as f:
+                for line in f:
+                    if line.startswith('MasterRecordInitialStart:'):
+                        t = line.split(': ')[-1].strip()
+                        t = dt.strptime(t, '%Y-%m-%d %H:%M:%S.%f')
+            self.fm.local_delete(rpath)
+            return t.year, t.month
+        else:
             return 0, 0
-        with open(lpath) as f:
-            for line in f:
-                if line.startswith('MasterRecordInitialStart:'):
-                    t = line.split(': ')[-1].strip()
-                    t = dt.strptime(t, '%Y-%m-%d %H:%M:%S.%f')
-        self.fm.local_delete(rpath)
-        return t.year, t.month
 
     def parse_project(self, pid):
         # parse all videos from a given project (pid) into images
@@ -97,6 +99,7 @@ class VideoParser:
     def upload_imgs(self):
         # upload the results directory
         self.fm.upload(self.fm.results_dir)
+
 
 class FileManager:
 
