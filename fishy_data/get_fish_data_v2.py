@@ -107,6 +107,13 @@ class VideoParser:
             # form the relative path to the individual video file and download it from Dropbox
             vid_path = vid_dir / vname
             self.fm.download(vid_path)
+            if '.h264' in vname:
+                original = vname
+                vname = original.replace('.h264', '.mp4')
+                command = ['ffmpeg', '-r', '30', '-i', original, '-threads', '1', '-c:v', 'copy', '-r', 30, vname]
+                sp.run(command)
+                self.fm.local_delete(vid_path)
+                vid_path = vid_dir / vname
             # generate a video capture object and extract the framerate
             cap = cv2.VideoCapture(str(self.fm.local_root / vid_path))
             fps = int(round(cap.get(cv2.CAP_PROP_FPS)))
