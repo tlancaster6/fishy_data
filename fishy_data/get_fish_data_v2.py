@@ -110,8 +110,9 @@ class VideoParser:
             if '.h264' in vname:
                 vname = vname.replace('.h264', '.mp4')
                 new_path = vid_dir / vname
-                command = ['ffmpeg', '-r', '30', '-i', self.fm.local_root / vid_path, '-threads', '1', '-c:v', 'copy',
-                           '-r', '30', self.fm.local_root / new_path]
+                command = ['ffmpeg', '-hide_banner', 'loglevel', '-error', '-r', '30', '-i',
+                           self.fm.local_root / vid_path, '-threads', '1', '-c:v', 'copy', '-r', '30',
+                           self.fm.local_root / new_path]
                 sp.run(command)
                 self.fm.local_delete(vid_path)
                 vid_path = new_path
