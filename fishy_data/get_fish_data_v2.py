@@ -20,7 +20,8 @@ class VideoParser:
         etc)
         """
         pids = self.get_pids()    # pids is short for Project Ids
-        for pid in pids:
+        print('parsing videos')
+        for pid in tqdm(pids):
             self.parse_project(pid)
         self.upload_imgs()
 
@@ -50,7 +51,7 @@ class VideoParser:
         valid_pids = []
         for pid in tqdm(all_pids):    # tqdm displays a progress bar when the script is run
             # first, check that that pid contains one of the search strings, or that the chosen subset was 'all'
-            if (self.subset == ['all']) or (any(s in pid.lower() for s in search_strings)):
+            if (self.subset == ['all']) or (any(s.lower() in pid.lower() for s in search_strings)):
                 # next, check that the year and month of creation are >= the desired minimums
                 year, month = self.check_creation_date(pid)
                 if (year >= self.min_month) and (month >= self.min_month):
@@ -98,7 +99,6 @@ class VideoParser:
         """
         parse all videos from a given project ID (pid) into images
         """
-        print(f'parsing videos for {pid}')
         # form the relative path to the project's video directory
         vid_dir = self.fm.data_dir / pid / 'Videos'
         # get the filenames for all of the .mp4 and .h264 videos in vid_dir
