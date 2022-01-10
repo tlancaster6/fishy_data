@@ -108,12 +108,12 @@ class VideoParser:
             vid_path = vid_dir / vname
             self.fm.download(vid_path)
             if '.h264' in vname:
-                original = vname
-                vname = original.replace('.h264', '.mp4')
-                command = ['ffmpeg', '-r', '30', '-i', original, '-threads', '1', '-c:v', 'copy', '-r', '30', vname]
+                vname = vname.replace('.h264', '.mp4')
+                new_path = vid_dir / vname
+                command = ['ffmpeg', '-r', '30', '-i', vid_path, '-threads', '1', '-c:v', 'copy', '-r', '30', new_path]
                 sp.run(command)
                 self.fm.local_delete(vid_path)
-                vid_path = vid_dir / vname
+                vid_path = new_path
             # generate a video capture object and extract the framerate
             cap = cv2.VideoCapture(str(self.fm.local_root / vid_path))
             fps = int(round(cap.get(cv2.CAP_PROP_FPS)))
