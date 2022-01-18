@@ -3,7 +3,7 @@ import fiftyone.utils.yolo as fouy
 from os.path import join
 
 name = 'CichlidDetection_v1'
-dataset_dir = join('datasets', name)
+dataset_dir = join('../data', name)
 splits = ['train', 'test', 'val']
 classes = ['f', 'm']
 dataset = fo.Dataset(name)
@@ -18,7 +18,7 @@ for split in splits:
 for split in splits:
     fouy.add_yolo_labels(sample_collection=dataset,
                          label_field='predictions',
-                         labels_path=f'datasets/CichlidDetection_v1_Detect/labels/{split}',
+                         labels_path=f'../data/CichlidDetection_v1_Detect/labels/{split}',
                          classes=classes)
 
 

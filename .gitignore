@@ -1,8 +1,6 @@
-# datasets
-fishy_data/datasets/*
-
-# sensitive files
-fishy_data/credentials/*
+# data
+fishy_data/data/*
+!fishy_data/data/sample
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
